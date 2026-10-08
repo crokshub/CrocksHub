@@ -1,1 +1,194 @@
-loadstring(game:HttpGet("https://orrxl4-protector.com/api/raw?id=i8tjeus9"))()
+-- ============================================================
+-- PAINEL DE UPDATE - CROKS HUB
+-- ============================================================
+local PlayerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+local TweenService = game:GetService("TweenService")
+
+local DISCORD_LINK = "https://discord.gg/dDqdH8tJdM"
+local IMG_FUNDO = "rbxassetid://107076535520704"
+local IMG_ICONE = "rbxassetid://117944324444129"
+
+-- Remove painel antigo se existir
+pcall(function()
+    for _, g in ipairs(PlayerGui:GetChildren()) do
+        if g:IsA("ScreenGui") and g.Name == "CroksUpdatePanel" then
+            g:Destroy()
+        end
+    end
+end)
+
+-- ScreenGui do painel
+local updateGui = Instance.new("ScreenGui")
+updateGui.Name = "CroksUpdatePanel"
+updateGui.ResetOnSpawn = false
+updateGui.IgnoreGuiInset = true
+updateGui.DisplayOrder = 999999
+updateGui.Parent = PlayerGui
+
+-- Painel principal
+local panel = Instance.new("Frame", updateGui)
+panel.Size = UDim2.new(0, 320, 0, 200)
+panel.Position = UDim2.new(1, 340, 0.5, -100)  -- começa FORA da tela (direita)
+panel.BackgroundColor3 = Color3.fromRGB(12, 3, 3)
+panel.BackgroundTransparency = 0.05
+panel.BorderSizePixel = 0
+panel.Active = true
+panel.Draggable = true
+Instance.new("UICorner", panel).CornerRadius = UDim.new(0, 14)
+
+-- Imagem de fundo (arte do Croks)
+local bgImg = Instance.new("ImageLabel", panel)
+bgImg.Size = UDim2.new(1, 0, 1, 0)
+bgImg.BackgroundColor3 = Color3.fromRGB(12, 3, 3)
+bgImg.BackgroundTransparency = 0
+bgImg.Image = IMG_FUNDO
+bgImg.ImageTransparency = 0.5
+bgImg.ScaleType = Enum.ScaleType.Crop
+bgImg.ZIndex = 1
+bgImg.Parent = panel
+Instance.new("UICorner", bgImg).CornerRadius = UDim.new(0, 14)
+
+-- Overlay escuro (deixa a arte sutil)
+local overlay = Instance.new("Frame", panel)
+overlay.Size = UDim2.new(1, 0, 1, 0)
+overlay.BackgroundColor3 = Color3.fromRGB(10, 2, 2)
+overlay.BackgroundTransparency = 0.35
+overlay.BorderSizePixel = 0
+overlay.ZIndex = 2
+Instance.new("UICorner", overlay).CornerRadius = UDim.new(0, 14)
+
+-- Borda gradiente vermelha
+local stroke = Instance.new("UIStroke", panel)
+stroke.Color = Color3.fromRGB(200, 30, 30)
+stroke.Thickness = 2
+stroke.ZIndex = 3
+local strokeGrad = Instance.new("UIGradient", stroke)
+strokeGrad.Color = ColorSequence.new(Color3.fromRGB(255, 80, 80), Color3.fromRGB(255, 180, 60))
+strokeGrad.Rotation = 45
+
+-- Ícone do Croks (topo)
+local icon = Instance.new("ImageLabel", panel)
+icon.Size = UDim2.new(0, 50, 0, 50)
+icon.Position = UDim2.new(0.5, -25, 0, 12)
+icon.BackgroundTransparency = 1
+icon.Image = IMG_ICONE
+icon.ScaleType = Enum.ScaleType.Fit
+icon.ZIndex = 10
+
+-- Título
+local title = Instance.new("TextLabel", panel)
+title.Size = UDim2.new(1, -20, 0, 28)
+title.Position = UDim2.new(0, 10, 0, 68)
+title.BackgroundTransparency = 1
+title.Text = "🎉 CROKS HUB UPDATE 🎉"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 16
+title.ZIndex = 10
+local titleGrad = Instance.new("UIGradient", title)
+titleGrad.Color = ColorSequence.new(Color3.fromRGB(255, 100, 100), Color3.fromRGB(255, 200, 80))
+titleGrad.Rotation = 90
+
+-- Subtítulo
+local subtitle = Instance.new("TextLabel", panel)
+subtitle.Size = UDim2.new(1, -20, 0, 16)
+subtitle.Position = UDim2.new(0, 10, 0, 96)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "Novidades no script! Entre no Discord"
+subtitle.TextColor3 = Color3.fromRGB(220, 190, 190)
+subtitle.Font = Enum.Font.GothamSemibold
+subtitle.TextSize = 11
+subtitle.ZIndex = 10
+
+-- Botão COPIAR DISCORD
+local copyBtn = Instance.new("TextButton", panel)
+copyBtn.Size = UDim2.new(1, -40, 0, 40)
+copyBtn.Position = UDim2.new(0, 20, 0, 122)
+copyBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
+copyBtn.BackgroundTransparency = 0.05
+copyBtn.Text = "📋 COPIAR DISCORD"
+copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyBtn.Font = Enum.Font.GothamBlack
+copyBtn.TextSize = 13
+copyBtn.BorderSizePixel = 0
+copyBtn.AutoButtonColor = false
+copyBtn.ZIndex = 10
+Instance.new("UICorner", copyBtn).CornerRadius = UDim.new(0, 10)
+local copyStroke = Instance.new("UIStroke", copyBtn)
+copyStroke.Color = Color3.fromRGB(255, 100, 100)
+copyStroke.Thickness = 1.5
+
+-- Feedback (texto que aparece depois de copiar)
+local feedback = Instance.new("TextLabel", panel)
+feedback.Size = UDim2.new(1, -20, 0, 14)
+feedback.Position = UDim2.new(0, 10, 0, 168)
+feedback.BackgroundTransparency = 1
+feedback.Text = ""
+feedback.TextColor3 = Color3.fromRGB(120, 255, 170)
+feedback.Font = Enum.Font.GothamBold
+feedback.TextSize = 10
+feedback.ZIndex = 10
+
+-- Botão X pra fechar
+local closeBtn = Instance.new("TextButton", panel)
+closeBtn.Size = UDim2.new(0, 24, 0, 24)
+closeBtn.Position = UDim2.new(1, -32, 0, 8)
+closeBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Font = Enum.Font.GothamBlack
+closeBtn.TextSize = 12
+closeBtn.BorderSizePixel = 0
+closeBtn.AutoButtonColor = false
+closeBtn.ZIndex = 11
+Instance.new("UICorner", closeBtn).CornerRadius = UDim.new(1, 0)
+
+-- ============================================================
+-- ANIMAÇÃO DE ENTRADA (desliza da direita pra esquerda)
+-- ============================================================
+task.wait(0.5)
+TweenService:Create(panel, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Position = UDim2.new(1, -340, 0.5, -100)
+}):Play()
+
+-- ============================================================
+-- FUNÇÕES DOS BOTÕES
+-- ============================================================
+
+-- Copiar Discord
+copyBtn.MouseButton1Click:Connect(function()
+    local ok = false
+    if setclipboard then ok = pcall(setclipboard, DISCORD_LINK)
+    elseif toclipboard then ok = pcall(toclipboard, DISCORD_LINK) end
+
+    if ok then
+        feedback.Text = "✓ Discord copiado!"
+        feedback.TextColor3 = Color3.fromRGB(120, 255, 170)
+        copyBtn.Text = "✓ COPIADO!"
+        copyBtn.BackgroundColor3 = Color3.fromRGB(50, 210, 100)
+        task.delay(2, function()
+            feedback.Text = ""
+            copyBtn.Text = "📋 COPIAR DISCORD"
+            copyBtn.BackgroundColor3 = Color3.fromRGB(200, 30, 30)
+        end)
+    else
+        feedback.Text = "Link: discord.gg/dDqdH8tJdM"
+        feedback.TextColor3 = Color3.fromRGB(255, 200, 100)
+        task.delay(4, function()
+            feedback.Text = ""
+        end)
+    end
+end)
+
+-- Fechar painel
+closeBtn.MouseButton1Click:Connect(function()
+    local tw = TweenService:Create(panel, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Position = UDim2.new(1, 400, 0.5, -100),
+        BackgroundTransparency = 1
+    })
+    tw:Play()
+    tw.Completed:Wait()
+    updateGui:Destroy()
+end)
+
+print("[CROKS] Painel de update carregado")
